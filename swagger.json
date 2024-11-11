@@ -1,0 +1,85 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Movie Recommendation System API",
+    "version": "1.0.0",
+    "description": "API Documentation"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000/api",
+      "description": "Local server"
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Register a new user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserRegister" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User registered successfully",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AuthToken" } } }
+          },
+          "400": { "description": "Bad request" }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "User login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserLogin" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User authenticated successfully",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AuthToken" } } }
+          },
+          "400": { "description": "Invalid credentials" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UserRegister": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "example": "John Doe" },
+          "email": { "type": "string", "example": "john@example.com" },
+          "password": { "type": "string", "example": "password123" }
+        },
+        "required": ["name", "email", "password"]
+      },
+      "UserLogin": {
+        "type": "object",
+        "properties": {
+          "email": { "type": "string", "example": "john@example.com" },
+          "password": { "type": "string", "example": "password123" }
+        },
+        "required": ["email", "password"]
+      },
+      "AuthToken": {
+        "type": "object",
+        "properties": {
+          "token": { "type": "string", "example": "jwt_token_here" }
+        }
+      }
+    }
+  }
+}
