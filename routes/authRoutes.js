@@ -11,52 +11,52 @@ const dotenv = require('dotenv');
 // Load environment variables
 dotenv.config();
 
-// @route   POST api/auth/register
+// @route   POST /api/auth/register
 // @desc    Register user
 // @access  Public
 router.post(
   '/register',
   [
-    check('name', 'Name is required').notEmpty(),
+    check('name', 'Name is required').not().isEmpty(),
     check('email', 'Please include a valid email').isEmail(),
-    check('password', 'Password must be 6 or more characters').isLength({ min: 6 }),
+    check('password', 'Password must be 6 or more characters').isLength({ min: 6 })
   ],
   async (req, res) => {
-    // Validate input
+    console.log('Request body:', req.body); // Log the request body
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log('Validation errors:', errors.array()); // Log validation errors
       return res.status(400).json({ errors: errors.array() });
     }
 
-    // Extract data
     const { name, email, password } = req.body;
 
     try {
       // Check if user exists
       let user = await User.findOne({ email });
       if (user) {
-        return res.status(400).json({ msg: 'User already exists' });
+        return res.status(400).json({ errors: [{ msg: 'User already exists' }] });
       }
 
       // Create new user
       user = new User({
         name,
         email,
-        password,
+        password
       });
 
-      // Hash password
+      // Encrypt password
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(password, salt);
 
-      // Save user
       await user.save();
 
-      // Generate JWT
+      // Return JWT
       const payload = {
         user: {
-          id: user.id,
-        },
+          id: user.id
+        }
       };
 
       jwt.sign(
@@ -69,48 +69,44 @@ router.post(
         }
       );
     } catch (err) {
+      console.error(err.message);
       res.status(500).send('Server error');
     }
   }
 );
 
-// @route   POST api/auth/login
+// @route   POST /api/auth/login
 // @desc    Authenticate user & get token
 // @access  Public
 router.post(
   '/login',
   [
     check('email', 'Please include a valid email').isEmail(),
-    check('password', 'Password is required').exists(),
+    check('password', 'Password is required').exists()
   ],
   async (req, res) => {
-    // Validate input
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    // Extract data
     const { email, password } = req.body;
 
     try {
-      // Check user
       let user = await User.findOne({ email });
       if (!user) {
-        return res.status(400).json({ msg: 'Invalid Credentials' });
+        return res.status(400).json({ errors: [{ msg: 'Invalid Credentials' }] });
       }
 
-      // Compare passwords
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
-        return res.status(400).json({ msg: 'Invalid Credentials' });
+        return res.status(400).json({ errors: [{ msg: 'Invalid Credentials' }] });
       }
 
-      // Generate JWT
       const payload = {
         user: {
-          id: user.id,
-        },
+          id: user.id
+        }
       };
 
       jwt.sign(
@@ -123,6 +119,7 @@ router.post(
         }
       );
     } catch (err) {
+      console.error(err.message);
       res.status(500).send('Server error');
     }
   }

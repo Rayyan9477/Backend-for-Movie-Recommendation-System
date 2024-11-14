@@ -11,7 +11,7 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 const dotenv = require('dotenv');
 
-// Load environment variables
+// Load environment variable
 dotenv.config();
 
 const app = express();
@@ -28,6 +28,11 @@ app.use('/api/users', userRoutes);
 app.use('/api/movies', movieRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/admin', adminRoutes);
+
+// Default route for /api
+app.get('/api', (req, res) => {
+    res.send('API is running');
+  });
 
 // Swagger API Documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
