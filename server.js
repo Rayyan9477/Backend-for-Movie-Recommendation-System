@@ -11,7 +11,6 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 const dotenv = require('dotenv');
 
-// Load environment variable
 dotenv.config();
 
 const app = express();

@@ -1,6 +1,8 @@
 // models/Movie.js
 
 const mongoose = require('mongoose');
+const Actor = require('./Actor');
+const Director = require('./Director');
 
 const MovieSchema = new mongoose.Schema({
   title: {

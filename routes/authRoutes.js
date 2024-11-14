@@ -55,14 +55,15 @@ router.post(
       // Return JWT
       const payload = {
         user: {
-          id: user.id
-        }
+          id: user.id,
+          isAdmin: user.isAdmin,
+        },
       };
-
+      
       jwt.sign(
         payload,
         process.env.JWT_SECRET,
-        { expiresIn: '1h' },
+        { expiresIn: '12h' },
         (err, token) => {
           if (err) throw err;
           res.json({ token });
@@ -105,10 +106,11 @@ router.post(
 
       const payload = {
         user: {
-          id: user.id
-        }
+          id: user.id,
+          isAdmin: user.isAdmin,
+        },
       };
-
+      
       jwt.sign(
         payload,
         process.env.JWT_SECRET,
