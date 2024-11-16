@@ -21,6 +21,10 @@ const MovieSchema = new mongoose.Schema({
     },
   ],
   releaseDate: Date,
+  isUpcoming: {
+    type: Boolean,
+    default: false,
+  },
   runtime: Number,
   synopsis: String,
   averageRating: {

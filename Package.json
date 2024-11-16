@@ -1,7 +1,7 @@
 {
   "name": "movie-recommendation-system",
   "version": "1.0.0",
-  "description": "Backend for Movie Recommendation System",
+  "description": "Backend for Movie Recommendation System", 
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

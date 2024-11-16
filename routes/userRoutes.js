@@ -12,7 +12,7 @@ const User = require('../models/User');
 
 router.get('/profile', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
+    const user = await findById(req.user.id).select('-password');
     res.json(user);
   } catch (err) {
     console.error(err.message);
@@ -27,7 +27,7 @@ router.put('/profile', auth, async (req, res) => {
   const { name, preferences } = req.body;
 
   try {
-    let user = await User.findById(req.user.id);
+    let user = await findById(req.user.id);
 
     if (name) user.name = name;
     if (preferences) user.preferences = preferences;
@@ -46,7 +46,7 @@ router.post('/wishlist', auth, async (req, res) => {
   const { movieId } = req.body;
 
   try {
-    let user = await User.findById(req.user.id);
+    let user = await findById(req.user.id);
 
     if (!user.wishlist.includes(movieId)) {
       user.wishlist.push(movieId);
@@ -64,7 +64,7 @@ router.post('/wishlist', auth, async (req, res) => {
 // @access  Private
 router.get('/wishlist', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).populate('wishlist');
+    const user = await findById(req.user.id).populate('wishlist');
     res.json(user.wishlist);
   } catch (err) {
     res.status(500).send('Server error');
@@ -77,7 +77,7 @@ router.get('/wishlist', auth, async (req, res) => {
 // @access  Private/Admin
 router.get('/', auth, async (req, res) => {
   try {
-    const users = await User.find().select('-password');
+    const users = await find().select('-password');
     res.json(users);
   } catch (err) {
     console.error(err.message);
@@ -90,7 +90,7 @@ router.get('/', auth, async (req, res) => {
 // @access  Private/Admin 
 router.get('/:id', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).select('-password');
+    const user = await findById(req.params.id).select('-password');
     if (!user) {
       return res.status(404).json({ msg: 'User not found' });
     }

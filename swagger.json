@@ -3,58 +3,14 @@
   "info": {
     "title": "Movie Recommendation System API",
     "version": "1.0.0",
-    "description": "API Documentation"
+    "description": "API Documentation for the Movie Recommendation System"
   },
   "servers": [
     {
       "url": "http://localhost:5000/api",
-      "description": "Local server"
+      "description": "Local development server"
     }
   ],
-  "paths": {
-    "/auth/register": {
-      "post": {
-        "tags": ["Authentication"],
-        "summary": "Register a new user",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/UserRegister" }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "User registered successfully",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AuthToken" } } }
-          },
-          "400": { "description": "Bad request" }
-        }
-      }
-    },
-    "/auth/login": {
-      "post": {
-        "tags": ["Authentication"],
-        "summary": "User login",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/UserLogin" }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "User authenticated successfully",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AuthToken" } } }
-          },
-          "400": { "description": "Invalid credentials" }
-        }
-      }
-    }
-  },
   "components": {
     "schemas": {
       "UserRegister": {
@@ -78,6 +34,621 @@
         "type": "object",
         "properties": {
           "token": { "type": "string", "example": "jwt_token_here" }
+        }
+      },
+      "UserProfileUpdate": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "example": "John Doe" },
+          "preferences": {
+            "type": "object",
+            "properties": {
+              "genres": {
+                "type": "array",
+                "items": { "type": "string" },
+                "example": ["Action", "Comedy"]
+              },
+              "actors": {
+                "type": "array",
+                "items": { "type": "string" },
+                "example": ["Tom Hanks", "Meryl Streep"]
+              }
+            }
+          }
+        }
+      },
+      "Movie": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string", "example": "Inception" },
+          "genre": {
+            "type": "array",
+            "items": { "type": "string" },
+            "example": ["Action", "Sci-Fi"]
+          },
+          "director": { "type": "string", "example": "director_id_here" },
+          "cast": {
+            "type": "array",
+            "items": { "type": "string" },
+            "example": ["actor_id_1", "actor_id_2"]
+          },
+          "releaseDate": { "type": "string", "format": "date", "example": "2010-07-16" },
+          "runtime": { "type": "integer", "example": 148 },
+          "synopsis": { "type": "string", "example": "A thief who steals corporate secrets..." },
+          "averageRating": { "type": "number", "example": 4.5 },
+          "coverPhoto": { "type": "string", "example": "url_to_cover_photo" },
+          "trivia": {
+            "type": "array",
+            "items": { "type": "string" },
+            "example": ["Trivia fact 1", "Trivia fact 2"]
+          },
+          "goofs": {
+            "type": "array",
+            "items": { "type": "string" },
+            "example": ["Goof 1", "Goof 2"]
+          },
+          "soundtrack": {
+            "type": "array",
+            "items": { "type": "string" },
+            "example": ["Soundtrack 1", "Soundtrack 2"]
+          },
+          "ageRating": { "type": "string", "example": "PG-13" },
+          "parentalGuide": { "type": "string", "example": "Some scenes may be unsuitable..." },
+          "boxOffice": {
+            "type": "object",
+            "properties": {
+              "openingWeekend": { "type": "number", "example": 62000000 },
+              "totalEarnings": { "type": "number", "example": 829895144 },
+              "internationalRevenue": { "type": "number", "example": 535745000 }
+            }
+          },
+          "awards": {
+            "type": "array",
+            "items": { "type": "string" },
+            "example": ["Best Cinematography", "Best Sound Editing"]
+          },
+          "isUpcoming": { "type": "boolean", "example": false }
+        }
+      },
+      "Review": {
+        "type": "object",
+        "properties": {
+          "user": { "type": "string", "example": "user_id_here" },
+          "movie": { "type": "string", "example": "movie_id_here" },
+          "rating": { "type": "integer", "minimum": 1, "maximum": 5, "example": 5 },
+          "reviewText": { "type": "string", "example": "Amazing movie with a complex plot..." }
+        },
+        "required": ["movie", "rating"]
+      },
+      "Actor": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "example": "Leonardo DiCaprio" },
+          "biography": { "type": "string", "example": "An American actor and producer..." },
+          "filmography": {
+            "type": "array",
+            "items": { "type": "string" },
+            "example": ["movie_id_1", "movie_id_2"]
+          },
+          "awards": {
+            "type": "array",
+            "items": { "type": "string" },
+            "example": ["Best Actor 2016"]
+          },
+          "photos": {
+            "type": "array",
+            "items": { "type": "string" },
+            "example": ["url_to_photo1", "url_to_photo2"]
+          }
+        },
+        "required": ["name"]
+      },
+      "Director": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "example": "Christopher Nolan" },
+          "biography": { "type": "string", "example": "A British-American film director..." },
+          "filmography": {
+            "type": "array",
+            "items": { "type": "string" },
+            "example": ["movie_id_1", "movie_id_2"]
+          },
+          "awards": {
+            "type": "array",
+            "items": { "type": "string" },
+            "example": ["Best Original Screenplay"]
+          },
+          "photos": {
+            "type": "array",
+            "items": { "type": "string" },
+            "example": ["url_to_photo1", "url_to_photo2"]
+          }
+        },
+        "required": ["name"]
+      },
+      "List": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "example": "My Favorite Sci-Fi Movies" },
+          "movies": {
+            "type": "array",
+            "items": { "type": "string" },
+            "example": ["movie_id_1", "movie_id_2"]
+          },
+          "isPublic": { "type": "boolean", "example": true }
+        },
+        "required": ["name", "movies"]
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [{ "BearerAuth": [] }],
+  "tags": [
+    { "name": "Authentication" },
+    { "name": "Users" },
+    { "name": "Movies" },
+    { "name": "Reviews" },
+    { "name": "Recommendations" },
+    { "name": "Lists" },
+    { "name": "Admin" }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Register a new user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserRegister" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User registered successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AuthToken" }
+              }
+            }
+          },
+          "400": { "description": "Bad request" }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "User login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserLogin" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User authenticated successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AuthToken" }
+              }
+            }
+          },
+          "400": { "description": "Invalid credentials" }
+        }
+      }
+    },
+    "/users/profile": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get user profile",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "User profile retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserProfileUpdate" }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" }
+        }
+      },
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update user profile",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserProfileUpdate" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "User profile updated successfully" },
+          "400": { "description": "Bad request" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/users/wishlist": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Add movie to wishlist",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "movieId": { "type": "string", "example": "movie_id_here" }
+                },
+                "required": ["movieId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Movie added to wishlist" },
+          "400": { "description": "Bad request" },
+          "401": { "description": "Unauthorized" }
+        }
+      },
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get user's wishlist",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Wishlist retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Movie" }
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/movies": {
+      "get": {
+        "tags": ["Movies"],
+        "summary": "Get movies with filters and pagination",
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer" }, "description": "Page number" },
+          { "name": "limit", "in": "query", "schema": { "type": "integer" }, "description": "Number of items per page" },
+          { "name": "genre", "in": "query", "schema": { "type": "string" }, "description": "Filter by genre(s)" },
+          { "name": "director", "in": "query", "schema": { "type": "string" }, "description": "Filter by director ID" },
+          { "name": "actor", "in": "query", "schema": { "type": "string" }, "description": "Filter by actor ID(s)" },
+          { "name": "search", "in": "query", "schema": { "type": "string" }, "description": "Search by title" },
+          { "name": "releaseYear", "in": "query", "schema": { "type": "integer" }, "description": "Filter by release year" },
+          { "name": "keywords", "in": "query", "schema": { "type": "string" }, "description": "Filter by keywords" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Movies retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "movies": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Movie" }
+                    },
+                    "totalPages": { "type": "integer", "example": 10 },
+                    "currentPage": { "type": "integer", "example": 1 }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Admin"],
+        "summary": "Add a new movie",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Movie" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Movie added successfully" },
+          "400": { "description": "Bad request" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" }
+        }
+      }
+    },
+    "/movies/{id}": {
+      "get": {
+        "tags": ["Movies"],
+        "summary": "Get movie details",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Movie details retrieved successfully",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/Movie" } }
+            }
+          },
+          "404": { "description": "Movie not found" }
+        }
+      },
+      "put": {
+        "tags": ["Admin"],
+        "summary": "Update a movie",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/Movie" } }
+          }
+        },
+        "responses": {
+          "200": { "description": "Movie updated successfully" },
+          "400": { "description": "Bad request" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" }
+        }
+      },
+      "delete": {
+        "tags": ["Admin"],
+        "summary": "Delete a movie",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Movie deleted successfully" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Movie not found" }
+        }
+      }
+    },
+    "/reviews": {
+      "post": {
+        "tags": ["Reviews"],
+        "summary": "Add or update a review",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/Review" } }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Review added/updated successfully",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/Review" } }
+            }
+          },
+          "400": { "description": "Bad request" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/reviews/{movieId}": {
+      "get": {
+        "tags": ["Reviews"],
+        "summary": "Get reviews for a movie",
+        "parameters": [
+          { "name": "movieId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "page", "in": "query", "schema": { "type": "integer" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reviews retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "reviews": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Review" }
+                    },
+                    "totalPages": { "type": "integer", "example": 5 },
+                    "currentPage": { "type": "integer", "example": 1 }
+                  }
+                }
+              }
+            }
+          },
+          "404": { "description": "Movie not found" }
+        }
+      }
+    },
+    "/recommendations": {
+      "get": {
+        "tags": ["Recommendations"],
+        "summary": "Get personalized movie recommendations",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Recommendations retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Movie" }
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/lists": {
+      "post": {
+        "tags": ["Lists"],
+        "summary": "Create a new custom list",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/List" } }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List created successfully",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/List" } }
+            }
+          },
+          "400": { "description": "Bad request" },
+          "401": { "description": "Unauthorized" }
+        }
+      },
+      "get": {
+        "tags": ["Lists"],
+        "summary": "Get all public lists",
+        "responses": {
+          "200": {
+            "description": "Lists retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/List" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/lists/{id}": {
+      "get": {
+        "tags": ["Lists"],
+        "summary": "Get a specific list",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "List retrieved successfully",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/List" } }
+            }
+          },
+          "404": { "description": "List not found" }
+        }
+      },
+      "put": {
+        "tags": ["Lists"],
+        "summary": "Update a custom list",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/List" } }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List updated successfully",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/List" } }
+            }
+          },
+          "400": { "description": "Bad request" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" }
+        }
+      },
+      "delete": {
+        "tags": ["Lists"],
+        "summary": "Delete a custom list",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "List deleted successfully" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "List not found" }
+        }
+      }
+    },
+    "/admin/stats": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Get site statistics",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Statistics retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "users": { "type": "integer", "example": 1000 },
+                    "movies": { "type": "integer", "example": 500 },
+                    "reviews": { "type": "integer", "example": 2000 }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" }
+        }
+      }
+    },
+    "/admin/reviews/{id}": {
+      "delete": {
+        "tags": ["Admin"],
+        "summary": "Delete a review",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Review deleted successfully" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Review not found" }
         }
       }
     }

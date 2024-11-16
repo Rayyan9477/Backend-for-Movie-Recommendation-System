@@ -9,23 +9,29 @@ const auth = require('../middleware/authMiddleware');
 // @desc    Get all movies with pagination and filters
 // @access  Public
 router.get('/', async (req, res) => {
-  const { page = 1, limit = 10, genre, director, actor, search } = req.query;
+  const { page = 1, limit = 10, genre, director, actor, search
+    , rating, year, runtime, language, country, releaseYear,
+   } = req.query;
 
   const query = {};
-
-  if (genre) query.genre = genre;
-  if (director) query.director = director;
-  if (actor) query.cast = actor;
+  if (rating) query.rating = { $gte: rating };
   if (search) query.title = { $regex: search, $options: 'i' };
+  if (genre) query.genre = { $in: genre.split(',') };
+  if (director) query.director = director;
+  if (actor) query.cast = { $in: actor.split(',') };
+  if (search) query.title = { $regex: search, $options: 'i' };
+  if (releaseYear) query.releaseYear = releaseYear;
+  if (keywords) query.keywords = { $in: keywords.split(',') };
+
 
   try {
-    const movies = await Movie.find(query)
+    const movies = await find(query)
       .populate('director')
       .populate('cast')
       .limit(Number(limit))
       .skip((Number(page) - 1) * Number(limit));
 
-    const total = await Movie.countDocuments(query);
+    const total = await countDocuments(query);
 
     res.json({
       movies,
@@ -42,7 +48,7 @@ router.get('/', async (req, res) => {
 // @access  Public
 router.get('/:id', async (req, res) => {
   try {
-    const movie = await Movie.findById(req.params.id)
+    const movie = await findById(req.params.id)
       .populate('director')
       .populate('cast');
 

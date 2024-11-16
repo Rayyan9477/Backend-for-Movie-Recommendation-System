@@ -10,6 +10,8 @@ const adminRoutes = require('./routes/adminRoutes');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 const dotenv = require('dotenv');
+const recommendationRoutes = require('./routes/recommendationRoutes');
+const listRoutes = require('./routes/listRoutes');
 
 dotenv.config();
 
@@ -32,6 +34,17 @@ app.use('/api/admin', adminRoutes);
 app.get('/api', (req, res) => {
     res.send('API is running');
   });
+
+  
+  
+  // After other route imports
+app.use('/api/recommendations', recommendationRoutes);
+
+// server.js
+
+
+// After other route imports
+app.use('/api/lists', listRoutes);
 
 // Swagger API Documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
