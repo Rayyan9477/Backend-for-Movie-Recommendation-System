@@ -651,6 +651,44 @@
           "404": { "description": "Review not found" }
         }
       }
+    },
+    "api/articles": {
+      "get": {
+        "tags": ["Articles"],
+        "summary": "Get all articles",
+        "responses": {
+          "200": {
+            "description": "List of articles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Article" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/discussions": {
+      "get": {
+        "tags": ["Discussions"],
+        "summary": "Get all discussions",
+        "responses": {
+          "200": {
+            "description": "List of discussions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Discussion" }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

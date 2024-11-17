@@ -12,6 +12,9 @@ const swaggerDocument = require('./swagger.json');
 const dotenv = require('dotenv');
 const recommendationRoutes = require('./routes/recommendationRoutes');
 const listRoutes = require('./routes/listRoutes');
+const articleRoutes = require('./routes/articleRoutes');
+const discussionRoutes = require('./routes/discussionRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
 
 dotenv.config();
 
@@ -29,22 +32,17 @@ app.use('/api/users', userRoutes);
 app.use('/api/movies', movieRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/recommendations', recommendationRoutes);
+app.use('/api/lists', listRoutes);
+app.use('/api/articles', articleRoutes);
+app.use('/api/discussions', discussionRoutes);
+app.use('/api/notifications', notificationRoutes);
+
 
 // Default route for /api
 app.get('/api', (req, res) => {
     res.send('API is running');
   });
-
-  
-  
-  // After other route imports
-app.use('/api/recommendations', recommendationRoutes);
-
-// server.js
-
-
-// After other route imports
-app.use('/api/lists', listRoutes);
 
 // Swagger API Documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
