@@ -27,6 +27,9 @@ const ListSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+    // models/List.js (Additions)
+  followers: 
+  [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 });
 
 module.exports = mongoose.model('List', ListSchema);

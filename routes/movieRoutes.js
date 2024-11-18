@@ -62,6 +62,44 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Additional routes for advanced search, filtering, and recommendations can be added here.
+router.get('/:id/boxoffice', async (req, res) => {
+  try {
+    const movie = await Movie.findById(req.params.id).select('boxOffice');
+    if (!movie) return res.status(404).json({ msg: 'Movie not found' });
+    res.json(movie.boxOffice);
+  } catch (err) {
+    res.status(500).send('Server error');
+  }
+});
+
+// Get top movies of the month
+router.get('/top/month', async (req, res) => {
+  try {
+    const currentMonth = new Date().getMonth();
+    const movies = await Movie.find({
+      releaseDate: {
+        $gte: new Date(new Date().setMonth(currentMonth, 1)),
+        $lt: new Date(new Date().setMonth(currentMonth + 1, 0)),
+      },
+    })
+      .sort({ averageRating: -1 })
+      .limit(10);
+    res.json(movies);
+  } catch (err) {
+    res.status(500).send('Server error');
+  }
+});
+
+// Get top movies by genre
+router.get('/top/genre/:genre', async (req, res) => {
+  try {
+    const movies = await Movie.find({ genre: req.params.genre })
+      .sort({ averageRating: -1 })
+      .limit(10);
+    res.json(movies);
+  } catch (err) {
+    res.status(500).send('Server error');
+  }
+});
 
 module.exports = router;

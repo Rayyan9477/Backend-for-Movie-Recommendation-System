@@ -15,6 +15,7 @@ const listRoutes = require('./routes/listRoutes');
 const articleRoutes = require('./routes/articleRoutes');
 const discussionRoutes = require('./routes/discussionRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
+const communityRoutes = require('./routes/communityRoutes');
 
 dotenv.config();
 
@@ -37,6 +38,7 @@ app.use('/api/lists', listRoutes);
 app.use('/api/articles', articleRoutes);
 app.use('/api/discussions', discussionRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/community', communityRoutes);
 
 
 // Default route for /api

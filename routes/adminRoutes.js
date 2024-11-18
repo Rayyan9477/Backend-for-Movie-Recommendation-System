@@ -118,4 +118,27 @@ router.delete('/reviews/:id', auth, adminAuth, async (req, res) => {
   }
 });
 
+// Get all movies (Admin)
+router.get('/movies', [auth, adminAuth], async (req, res) => {
+  try {
+    const movies = await Movie.find().populate('director').populate('cast');
+    res.json(movies);
+  } catch (err) {
+    res.status(500).send('Server error');
+  }
+});
+
+router.get('/trending-genres', [auth, adminAuth], async (req, res) => {
+  try {
+    const genres = await Movie.aggregate([
+      { $unwind: '$genre' },
+      { $group: { _id: '$genre', count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+    ]);
+    res.json(genres);
+  } catch (err) {
+    res.status(500).send('Server error');
+  }
+});
+
 module.exports = router;

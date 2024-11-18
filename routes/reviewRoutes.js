@@ -68,4 +68,21 @@ router.get('/:movieId', async (req, res) => {
   }
 });
 
+// Update a review
+router.put('/:id', auth, async (req, res) => {
+  const { rating, reviewText } = req.body;
+  try {
+    const review = await Review.findById(req.params.id);
+    if (!review) return res.status(404).json({ msg: 'Review not found' });
+    if (review.user.toString() !== req.user.id)
+      return res.status(401).json({ msg: 'Unauthorized' });
+    review.rating = rating;
+    review.reviewText = reviewText;
+    await review.save();
+    res.json(review);
+  } catch (err) {
+    res.status(500).send('Server error');
+  }
+});
+
 module.exports = router;

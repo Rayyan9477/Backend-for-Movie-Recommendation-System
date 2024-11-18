@@ -36,10 +36,11 @@
           "token": { "type": "string", "example": "jwt_token_here" }
         }
       },
-      "UserProfileUpdate": {
+      "UserProfile": {
         "type": "object",
         "properties": {
           "name": { "type": "string", "example": "John Doe" },
+          "email": { "type": "string", "example": "john@example.com" },
           "preferences": {
             "type": "object",
             "properties": {
@@ -54,23 +55,29 @@
                 "example": ["Tom Hanks", "Meryl Streep"]
               }
             }
+          },
+          "wishlist": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Movie" }
           }
         }
       },
       "Movie": {
         "type": "object",
         "properties": {
+          "id": { "type": "string", "example": "movie_id_here" },
           "title": { "type": "string", "example": "Inception" },
           "genre": {
             "type": "array",
             "items": { "type": "string" },
             "example": ["Action", "Sci-Fi"]
           },
-          "director": { "type": "string", "example": "director_id_here" },
+          "director": {
+            "$ref": "#/components/schemas/Director"
+          },
           "cast": {
             "type": "array",
-            "items": { "type": "string" },
-            "example": ["actor_id_1", "actor_id_2"]
+            "items": { "$ref": "#/components/schemas/Actor" }
           },
           "releaseDate": { "type": "string", "format": "date", "example": "2010-07-16" },
           "runtime": { "type": "integer", "example": 148 },
@@ -93,7 +100,7 @@
             "example": ["Soundtrack 1", "Soundtrack 2"]
           },
           "ageRating": { "type": "string", "example": "PG-13" },
-          "parentalGuide": { "type": "string", "example": "Some scenes may be unsuitable..." },
+          "parentalGuidance": { "type": "string", "example": "Some scenes may be unsuitable..." },
           "boxOffice": {
             "type": "object",
             "properties": {
@@ -110,25 +117,15 @@
           "isUpcoming": { "type": "boolean", "example": false }
         }
       },
-      "Review": {
-        "type": "object",
-        "properties": {
-          "user": { "type": "string", "example": "user_id_here" },
-          "movie": { "type": "string", "example": "movie_id_here" },
-          "rating": { "type": "integer", "minimum": 1, "maximum": 5, "example": 5 },
-          "reviewText": { "type": "string", "example": "Amazing movie with a complex plot..." }
-        },
-        "required": ["movie", "rating"]
-      },
       "Actor": {
         "type": "object",
         "properties": {
+          "id": { "type": "string", "example": "actor_id_here" },
           "name": { "type": "string", "example": "Leonardo DiCaprio" },
           "biography": { "type": "string", "example": "An American actor and producer..." },
           "filmography": {
             "type": "array",
-            "items": { "type": "string" },
-            "example": ["movie_id_1", "movie_id_2"]
+            "items": { "$ref": "#/components/schemas/Movie" }
           },
           "awards": {
             "type": "array",
@@ -139,19 +136,20 @@
             "type": "array",
             "items": { "type": "string" },
             "example": ["url_to_photo1", "url_to_photo2"]
-          }
+          },
+          "dateOfBirth": { "type": "string", "format": "date", "example": "1974-11-11" }
         },
         "required": ["name"]
       },
       "Director": {
         "type": "object",
         "properties": {
+          "id": { "type": "string", "example": "director_id_here" },
           "name": { "type": "string", "example": "Christopher Nolan" },
           "biography": { "type": "string", "example": "A British-American film director..." },
           "filmography": {
             "type": "array",
-            "items": { "type": "string" },
-            "example": ["movie_id_1", "movie_id_2"]
+            "items": { "$ref": "#/components/schemas/Movie" }
           },
           "awards": {
             "type": "array",
@@ -162,9 +160,21 @@
             "type": "array",
             "items": { "type": "string" },
             "example": ["url_to_photo1", "url_to_photo2"]
-          }
+          },
+          "dateOfBirth": { "type": "string", "format": "date", "example": "1970-07-30" }
         },
         "required": ["name"]
+      },
+      "Review": {
+        "type": "object",
+        "properties": {
+          "user": { "type": "string", "example": "user_id_here" },
+          "movie": { "type": "string", "example": "movie_id_here" },
+          "rating": { "type": "integer", "minimum": 1, "maximum": 5, "example": 5 },
+          "reviewText": { "type": "string", "example": "Amazing movie with a complex plot..." },
+          "date": { "type": "string", "format": "date-time", "example": "2023-10-02T12:00:00Z" }
+        },
+        "required": ["movie", "rating"]
       },
       "List": {
         "type": "object",
@@ -178,6 +188,68 @@
           "isPublic": { "type": "boolean", "example": true }
         },
         "required": ["name", "movies"]
+      },
+      "Article": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string", "example": "New 'Inception' Sequel Announced" },
+          "content": { "type": "string", "example": "Content of the article..." },
+          "category": { "type": "string", "example": "news" },
+          "publishDate": { "type": "string", "format": "date-time", "example": "2023-10-01T10:00:00Z" },
+          "author": { "type": "string", "example": "user_id_here" },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "example": ["sequel", "upcoming"]
+          }
+        },
+        "required": ["title", "content", "category"]
+      },
+      "Discussion": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string", "example": "What did you think about the ending?" },
+          "content": { "type": "string", "example": "I was surprised by the final scene..." },
+          "user": { "type": "string", "example": "user_id_here" },
+          "movie": { "type": "string", "example": "movie_id_here" },
+          "comments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "user": { "type": "string", "example": "user_id_here" },
+                "content": { "type": "string", "example": "I completely agree!" },
+                "createdAt": { "type": "string", "format": "date-time", "example": "2023-10-02T12:00:00Z" }
+              }
+            }
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "example": ["spoilers", "discussion"]
+          },
+          "createdAt": { "type": "string", "format": "date-time", "example": "2023-10-01T10:00:00Z" }
+        },
+        "required": ["title", "content", "user"]
+      },
+      "Notification": {
+        "type": "object",
+        "properties": {
+          "user": { "type": "string", "example": "user_id_here" },
+          "type": { "type": "string", "example": "Reminder" },
+          "content": { "type": "string", "example": "New movie 'Inception 2' is releasing soon." },
+          "isRead": { "type": "boolean", "example": false },
+          "date": { "type": "string", "format": "date-time", "example": "2023-10-01T10:00:00Z" }
+        },
+        "required": ["user", "type", "content"]
+      },
+      "SiteStats": {
+        "type": "object",
+        "properties": {
+          "users": { "type": "integer", "example": 1000 },
+          "movies": { "type": "integer", "example": 500 },
+          "reviews": { "type": "integer", "example": 1500 }
+        }
       }
     },
     "securitySchemes": {
@@ -188,7 +260,11 @@
       }
     }
   },
-  "security": [{ "BearerAuth": [] }],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
   "tags": [
     { "name": "Authentication" },
     { "name": "Users" },
@@ -196,7 +272,10 @@
     { "name": "Reviews" },
     { "name": "Recommendations" },
     { "name": "Lists" },
-    { "name": "Admin" }
+    { "name": "Admin" },
+    { "name": "Articles" },
+    { "name": "Discussions" },
+    { "name": "Notifications" }
   ],
   "paths": {
     "/auth/register": {
@@ -206,18 +285,14 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/UserRegister" }
-            }
+            "application/json": { "schema": { "$ref": "#/components/schemas/UserRegister" } }
           }
         },
         "responses": {
           "200": {
             "description": "User registered successfully",
             "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/AuthToken" }
-              }
+              "application/json": { "schema": { "$ref": "#/components/schemas/AuthToken" } }
             }
           },
           "400": { "description": "Bad request" }
@@ -231,18 +306,14 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/UserLogin" }
-            }
+            "application/json": { "schema": { "$ref": "#/components/schemas/UserLogin" } }
           }
         },
         "responses": {
           "200": {
             "description": "User authenticated successfully",
             "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/AuthToken" }
-              }
+              "application/json": { "schema": { "$ref": "#/components/schemas/AuthToken" } }
             }
           },
           "400": { "description": "Invalid credentials" }
@@ -258,9 +329,7 @@
           "200": {
             "description": "User profile retrieved successfully",
             "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/UserProfileUpdate" }
-              }
+              "application/json": { "schema": { "$ref": "#/components/schemas/UserProfile" } }
             }
           },
           "401": { "description": "Unauthorized" }
@@ -271,10 +340,10 @@
         "summary": "Update user profile",
         "security": [{ "BearerAuth": [] }],
         "requestBody": {
-          "required": true,
+          "required": false,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/UserProfileUpdate" }
+              "schema": { "$ref": "#/components/schemas/UserProfile" }
             }
           }
         },
@@ -286,6 +355,25 @@
       }
     },
     "/users/wishlist": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get user's wishlist",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Wishlist retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Movie" }
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" }
+        }
+      },
       "post": {
         "tags": ["Users"],
         "summary": "Add movie to wishlist",
@@ -309,25 +397,6 @@
           "400": { "description": "Bad request" },
           "401": { "description": "Unauthorized" }
         }
-      },
-      "get": {
-        "tags": ["Users"],
-        "summary": "Get user's wishlist",
-        "security": [{ "BearerAuth": [] }],
-        "responses": {
-          "200": {
-            "description": "Wishlist retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/Movie" }
-                }
-              }
-            }
-          },
-          "401": { "description": "Unauthorized" }
-        }
       }
     },
     "/movies": {
@@ -340,9 +409,7 @@
           { "name": "genre", "in": "query", "schema": { "type": "string" }, "description": "Filter by genre(s)" },
           { "name": "director", "in": "query", "schema": { "type": "string" }, "description": "Filter by director ID" },
           { "name": "actor", "in": "query", "schema": { "type": "string" }, "description": "Filter by actor ID(s)" },
-          { "name": "search", "in": "query", "schema": { "type": "string" }, "description": "Search by title" },
-          { "name": "releaseYear", "in": "query", "schema": { "type": "integer" }, "description": "Filter by release year" },
-          { "name": "keywords", "in": "query", "schema": { "type": "string" }, "description": "Filter by keywords" }
+          { "name": "search", "in": "query", "schema": { "type": "string" }, "description": "Search by title" }
         ],
         "responses": {
           "200": {
@@ -394,7 +461,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Movie details retrieved successfully",
+            "description": "Movie retrieved successfully",
             "content": {
               "application/json": { "schema": { "$ref": "#/components/schemas/Movie" } }
             }
@@ -437,6 +504,29 @@
         }
       }
     },
+    "/movies/{id}/similar": {
+      "get": {
+        "tags": ["Movies"],
+        "summary": "Get similar movies",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Similar movies retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Movie" }
+                }
+              }
+            }
+          },
+          "404": { "description": "Movie not found" }
+        }
+      }
+    },
     "/reviews": {
       "post": {
         "tags": ["Reviews"],
@@ -449,12 +539,7 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "Review added/updated successfully",
-            "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/Review" } }
-            }
-          },
+          "200": { "description": "Review added/updated successfully" },
           "400": { "description": "Bad request" },
           "401": { "description": "Unauthorized" }
         }
@@ -466,8 +551,8 @@
         "summary": "Get reviews for a movie",
         "parameters": [
           { "name": "movieId", "in": "path", "required": true, "schema": { "type": "string" } },
-          { "name": "page", "in": "query", "schema": { "type": "integer" } },
-          { "name": "limit", "in": "query", "schema": { "type": "integer" } }
+          { "name": "page", "in": "query", "schema": { "type": "integer" }, "description": "Page number" },
+          { "name": "limit", "in": "query", "schema": { "type": "integer" }, "description": "Number of items per page" }
         ],
         "responses": {
           "200": {
@@ -495,7 +580,7 @@
     "/recommendations": {
       "get": {
         "tags": ["Recommendations"],
-        "summary": "Get personalized movie recommendations",
+        "summary": "Get personalized recommendations",
         "security": [{ "BearerAuth": [] }],
         "responses": {
           "200": {
@@ -513,6 +598,25 @@
         }
       }
     },
+    "/recommendations/trending": {
+      "get": {
+        "tags": ["Recommendations"],
+        "summary": "Get trending movies",
+        "responses": {
+          "200": {
+            "description": "Trending movies retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Movie" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/lists": {
       "post": {
         "tags": ["Lists"],
@@ -525,19 +629,15 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "List created successfully",
-            "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/List" } }
-            }
-          },
+          "200": { "description": "List created successfully" },
           "400": { "description": "Bad request" },
           "401": { "description": "Unauthorized" }
         }
       },
       "get": {
         "tags": ["Lists"],
-        "summary": "Get all public lists",
+        "summary": "Get user's custom lists",
+        "security": [{ "BearerAuth": [] }],
         "responses": {
           "200": {
             "description": "Lists retrieved successfully",
@@ -549,30 +649,69 @@
                 }
               }
             }
+          },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/articles": {
+      "get": {
+        "tags": ["Articles"],
+        "summary": "Get all articles",
+        "responses": {
+          "200": {
+            "description": "Articles retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Article" }
+                }
+              }
+            }
           }
         }
       }
     },
-    "/lists/{id}": {
+    "/discussions": {
       "get": {
-        "tags": ["Lists"],
-        "summary": "Get a specific list",
-        "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
-        ],
+        "tags": ["Discussions"],
+        "summary": "Get all discussions",
         "responses": {
           "200": {
-            "description": "List retrieved successfully",
+            "description": "Discussions retrieved successfully",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/List" } }
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Discussion" }
+                }
+              }
             }
-          },
-          "404": { "description": "List not found" }
+          }
         }
       },
-      "put": {
-        "tags": ["Lists"],
-        "summary": "Update a custom list",
+      "post": {
+        "tags": ["Discussions"],
+        "summary": "Create a new discussion",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/Discussion" } }
+          }
+        },
+        "responses": {
+          "200": { "description": "Discussion created successfully" },
+          "400": { "description": "Bad request" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/discussions/{id}/comments": {
+      "post": {
+        "tags": ["Discussions"],
+        "summary": "Add a comment to a discussion",
         "security": [{ "BearerAuth": [] }],
         "parameters": [
           { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
@@ -580,33 +719,58 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": { "schema": { "$ref": "#/components/schemas/List" } }
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "content": { "type": "string", "example": "I think..." }
+                },
+                "required": ["content"]
+              }
+            }
           }
         },
         "responses": {
-          "200": {
-            "description": "List updated successfully",
-            "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/List" } }
-            }
-          },
+          "200": { "description": "Comment added successfully" },
           "400": { "description": "Bad request" },
           "401": { "description": "Unauthorized" },
-          "403": { "description": "Forbidden" }
+          "404": { "description": "Discussion not found" }
         }
-      },
-      "delete": {
-        "tags": ["Lists"],
-        "summary": "Delete a custom list",
+      }
+    },
+    "/notifications": {
+      "get": {
+        "tags": ["Notifications"],
+        "summary": "Get user notifications",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Notifications retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Notification" }
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/notifications/{id}/read": {
+      "put": {
+        "tags": ["Notifications"],
+        "summary": "Mark a notification as read",
         "security": [{ "BearerAuth": [] }],
         "parameters": [
           { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
         ],
         "responses": {
-          "200": { "description": "List deleted successfully" },
+          "200": { "description": "Notification marked as read" },
           "401": { "description": "Unauthorized" },
-          "403": { "description": "Forbidden" },
-          "404": { "description": "List not found" }
+          "404": { "description": "Notification not found" }
         }
       }
     },
@@ -620,14 +784,7 @@
             "description": "Statistics retrieved successfully",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "users": { "type": "integer", "example": 1000 },
-                    "movies": { "type": "integer", "example": 500 },
-                    "reviews": { "type": "integer", "example": 2000 }
-                  }
-                }
+                "schema": { "$ref": "#/components/schemas/SiteStats" }
               }
             }
           },
@@ -639,7 +796,7 @@
     "/admin/reviews/{id}": {
       "delete": {
         "tags": ["Admin"],
-        "summary": "Delete a review",
+        "summary": "Delete a user review",
         "security": [{ "BearerAuth": [] }],
         "parameters": [
           { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
@@ -649,44 +806,6 @@
           "401": { "description": "Unauthorized" },
           "403": { "description": "Forbidden" },
           "404": { "description": "Review not found" }
-        }
-      }
-    },
-    "api/articles": {
-      "get": {
-        "tags": ["Articles"],
-        "summary": "Get all articles",
-        "responses": {
-          "200": {
-            "description": "List of articles",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/Article" }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/discussions": {
-      "get": {
-        "tags": ["Discussions"],
-        "summary": "Get all discussions",
-        "responses": {
-          "200": {
-            "description": "List of discussions",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/Discussion" }
-                }
-              }
-            }
-          }
         }
       }
     }
